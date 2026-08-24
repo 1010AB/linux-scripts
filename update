@@ -4,21 +4,27 @@ OS=/etc/os-release
 logfile=/var/log/updater.log
 errorfile=/var/log/updateerror.log
 # check the Linux Operating system to know which 
-# installation package  to use 
+# installation package  to use
+# Function for checcking the exist status  of the update 
+check_exit-status() {
+	
+if [ $? -ne 0 ]
+then 
+        echo "An error Occurred, please check the $errorlog file"
+else 
+
+        echo "Your update was successful at $(date), check $logfile for your update log"
+fi 
+
+
+}
 
 if grep -q "Ubuntu" $OS 
 then 
 	#check what the  OS is being installed 
 	sudo apt update >>$logfile 2>>$errorfile
+	check_exit-status
 	sudo apt dist-upgrade -y  >>$logfile  2>>$errorfile
+	check_exit-status
 fi 
 
-	# Check  for update status and where to view logs 
-
-if [ $? -ne 0 ]
-then 
-	echo "An error Occurred, please check the $errorlog file"
-else 
-
-	echo "Your update was successful at $(date), check $logfile for your update log"
-fi 
