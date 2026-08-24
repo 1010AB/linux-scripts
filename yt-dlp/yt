@@ -1,0 +1,8 @@
+#! /bin/bash 
+
+# check systems -level tools
+
+for cmd in python3 pip3 ffmpeg yt-dlp; do 
+	echo -n "$cmd: "
+	command -v  $cmd  &>/dev/null && $cmd --version 2>&1 | head -1  ||  echo "NOT INSTALLED !!!"
+done
