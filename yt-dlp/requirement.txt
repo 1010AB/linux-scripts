@@ -1,0 +1,4 @@
+# requirement 
+1. to run thsi script you will need to have a minimuim of yt-dlp version 2024.1.1 installed on your devices 
+2. pycrptodomex this is required for some encrypted/HLS streams to download properly  
+3. mutegen - lets yt-dlp embed metadata (title,thumbnail, etc.) into audio files cleanly, and useful if you a=every do audio-format mp3
