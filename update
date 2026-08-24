@@ -1,0 +1,24 @@
+#!/bin/bash 
+
+OS=/etc/os-release
+logfile=/var/log/updater.log
+errorfile=/var/log/updateerror.log
+# check the Linux Operating system to know which 
+# installation package  to use 
+
+if grep -q "Ubuntu" $OS 
+then 
+	#check what the  OS is being installed 
+	sudo apt update >>$logfile 2>>$errorfile
+	sudo apt dist-upgrade -y  >>$logfile  2>>$errorfile
+fi 
+
+	# Check  for update status and where to view logs 
+
+if [ $? -ne 0 ]
+then 
+	echo "An error Occurred, please check the $errorlog file"
+else 
+
+	echo "Your update was successful at $(date), check $logfile for your update log"
+fi 
