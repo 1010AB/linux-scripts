@@ -23,3 +23,15 @@ fi
 done
 }
 check_tools-deps 
+# installing  the  dependancies 
+install_tools() {
+# check that the array is not empty 
+if [ ${#missing[@]} -gt 0 ];  then 
+	echo "Installing: ${missing[*]}"
+	for cmd in  "${missing[@]}"; do 
+		sudo apt install -y "${pkg_map[$cmd]}"
+ echo "The following dependancies are being installed ${missing[*]}"
+		done 
+fi 
+}
+install_tools
