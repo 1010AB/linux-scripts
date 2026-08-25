@@ -1,8 +1,25 @@
 #! /bin/bash 
 
-# check systems -level tools
 
+# check systems-level tools, install any that is missing 
+#create an associative to use  to map 
+declare -A pkg_map=(
+		[python3]="python3"
+		[pip3]="python3-pip"
+		[ffmpeg]="ffmpeg"
+		[yt-dlp]="yt-dlp"
+) 
+check_tools-deps() {
+missing=()
 for cmd in python3 pip3 ffmpeg yt-dlp; do 
 	echo -n "$cmd: "
-	command -v  $cmd  &>/dev/null && $cmd --version 2>&1 | head -1  ||  echo "NOT INSTALLED !!!"
+if 
+	command -v  $cmd  &>/dev/null; then
+ $cmd --version 2>&1 | head -1 
+else 
+	echo  "NOT INSTALLED !!!"
+	missing+=("$cmd")
+fi 
 done
+}
+check_tools-deps 
