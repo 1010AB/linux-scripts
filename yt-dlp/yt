@@ -22,7 +22,6 @@ else
 fi 
 done
 }
-check_tools-deps 
 # installing  the  dependancies 
 install_tools() {
 # check that the array is not empty 
@@ -34,4 +33,10 @@ if [ ${#missing[@]} -gt 0 ];  then
 		done 
 fi 
 }
-install_tools
+#check for js runtime 
+check_js_runtime() {
+	if command -v deno &>/dev/null ;then 
+	echo "deno: $(deno --version | head -1 )"
+	return 
+
+}
