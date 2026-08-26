@@ -38,5 +38,15 @@ check_js_runtime() {
 	if command -v deno &>/dev/null ;then 
 	echo "deno: $(deno --version | head -1 )"
 	return 
-
+fi 
+	echo "deno: NOT INSTALLED (optional, but required for reliable Youtube extraction)"
+	read -rp "Install deno now? [y/N] " reply 
+	if [[ "$reply" =~ ^[Yy]$  ]]; then 
+    	 curl -fsSL https://deno.land/install.sh | sh 
+	echo "Add deno to Your PATH (see installer output above) before running yt-dlp again"
+	fi 
 }
+check_tools-deps
+install_tools
+check_js_runtime
+
