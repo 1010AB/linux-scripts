@@ -21,6 +21,7 @@ else
 	missing+=("$cmd")
 fi 
 done
+
 }
 # installing  the  dependancies 
 install_tools() {
@@ -30,8 +31,9 @@ if [ ${#missing[@]} -gt 0 ];  then
 	for cmd in  "${missing[@]}"; do 
 		sudo apt install -y "${pkg_map[$cmd]}"
  echo "The following dependancies are being installed ${missing[*]}"
-		done 
+	done 
 fi 
+
 }
 #check for js runtime 
 check_js_runtime() {
@@ -46,7 +48,22 @@ fi
 	echo "Add deno to Your PATH (see installer output above) before running yt-dlp again"
 	fi 
 }
+#download playlist function 
+download_playlist() {
+	read -rp "Enter YouTube playlist URL: " url 
+	if [ -z "$url" ]; then 
+	echo "No URL provided. " >&2
+	exit  1
+	fi 
+yt-dlp \
+	--simulate \
+	-f  "bv*[height<=1080]+ba/best[height<=1080]" \
+	-o  "%(playlist_index)03d - %(title)s.%(ext)s" \
+	--download-archive  archive.txt \
+	 $url
+
+}
 check_tools-deps
 install_tools
 check_js_runtime
-
+download_playlist
