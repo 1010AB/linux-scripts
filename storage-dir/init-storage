@@ -1,0 +1,12 @@
+#!/bin/bash
+#
+# This scripts will be used to create, split and divide 1Tb hard drives 
+# to help reduce and better implement lv 
+# Maintainer : Ahmed Babatunde 
+# email address: Tundehamed20@gmail.com
+
+# First thing is to  write a function that wipes the whole hard drive. 
+
+wipes() {
+
+}
