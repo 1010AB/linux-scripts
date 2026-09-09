@@ -1,3 +1,32 @@
 #!/bin/bash
 #
-#This scripts 
+# This scripts will be used to create, split and divide 1Tb hard drives 
+# to help reduce and better implement lv 
+# Maintainer : Ahmed Babatunde 
+# email address: Tundehamed20@gmail.com
+disklog_err=/var/log/disklog_err
+disk
+# First thing is to  write a function that wipes the whole hard drive. 
+
+check_disk() {
+	#create a variable that takes the disk  paths 
+	read -rp  "Enter disk path i.e /dev/sd*: " disk
+	echo "The disk that will be wiped is $disk"
+	# check that the disk is a  real device
+	if [[ ! -b "$disk" ]]; then 
+	echo  "Error: $disk is not a block device" >> "$disklog_err" 
+	return 1
+	fi 
+	
+	#check that the disk is not running OS
+	root_dev=$(findmnt -no SOURCE /)
+	root_disk=/dev/$(lsblk -no PKNAME "$root_dev")
+	if [[ "$disk" == "$root_disk" ]]; then 
+	echo "Error: $disk is the OS disk, refusing"  >> "$disklog_err"
+	return 1
+	fi
+	 #  show the disk size 
+	lsblk  $disk
+}
+
+check_disk
