@@ -23,6 +23,7 @@ check_disk() {
 	root_disk=/dev/$(lsblk -no PKNAME "$root_dev")
 	if [[ "$disk" == "$root_disk" ]]; then 
 	echo "Error: $disk is the OS disk, refusing"  >> "$disklog_err"
+	cat "$disklog_err"
 	return 1
 	fi
 	 #  show the disk size 
