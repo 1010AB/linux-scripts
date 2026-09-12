@@ -4,20 +4,27 @@
 # to help reduce and better implement lv 
 # Maintainer : Ahmed Babatunde 
 # email address: Tundehamed20@gmail.com
+#global variable
 disklog_err=/var/log/disklog_err
-
+disk="${1:-}"
+# This allow and give root permissions to all command that might and needs access to root
+	[[ $EUID -ne 0 ]] && exec sudo "$0" "$@"
 # First thing is to  write a function that wipes the whole hard drive. 
-
+#get the proper name of the disk setting up a part function to avoid repetition 
+get_part() {
+	udevadm settle
+	part=$(lsblk -nrpo NAME "$disk" | sed -n 2p)
+}
 check_disk() {
-	#create a variable that takes the disk  paths 
-	read -rp  "Enter disk path i.e /dev/sd*: " disk
+	#create a variable that takes the disk  paths
+	read -rp "Enter the drive path e.g (/dev/sdb):" disk 
 	echo "The disk that will be wiped is $disk"
 	# check that the disk is a  real device
 	if [[ ! -b "$disk" ]]; then 
 	echo  "Error: $disk is not a block device" >> "$disklog_err" 
 	return 1
-	fi 
-	
+	fi
+
 	#check that the disk is not running OS
 	root_dev=$(findmnt -no SOURCE /)
 	root_disk=/dev/$(lsblk -no PKNAME "$root_dev")
@@ -30,4 +37,34 @@ check_disk() {
 	lsblk  $disk
 }
 
-check_disk
+wipe_disk() {
+#first you wipe all the partition signatures i.e where the pv hearders live 
+	get_part
+	if  [[ -n "$part" ]]; then 
+	vgchange -an "$(pvs --noheadings -o vg_name "$part" 2>/dev/null | tr -d ' ')" 2>/dev/null
+	wipefs -a "$part"
+	fi 
+# then you wipe the disk signatures 
+	wipefs -a $disk 
+	sgdisk --zap-all "$disk"
+	partprobe "$disk"
+	udevadm settle
+	lsblk "$disk"
+	
+}
+
+lvm_prep() {
+# Partition the dis as a single whole  one GPT partition 
+local vg="vg_data"
+	sgdisk -n  1:0:0 -t 1:8e00 "$disk"
+	partprobe "$disk"
+	get_part
+	pvcreate "$part"
+	vgcreate "$vg" "$part"
+	lvcreate -l 50%VG -n lv_backup "$vg"
+	lvcreate -l 40%FREE -n lv_proxmox "$vg"
+
+#list out the lvs within the VGs
+lvs "$vg"
+}
+check_disk && wipe_disk && lvm_prep
